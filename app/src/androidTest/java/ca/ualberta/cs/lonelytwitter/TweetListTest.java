@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * Created by kmbaker on 9/29/15.
  */
-public class TweetListTest extends ActivityInstrumentationTestCase2 {
+public class TweetListTest extends ActivityInstrumentationTestCase2 implements MyObserver {
 
     public TweetListTest() {
         super(ca.ualberta.cs.lonelytwitter.LonelyTwitterActivity.class);
@@ -83,6 +83,40 @@ public class TweetListTest extends ActivityInstrumentationTestCase2 {
         list.removeTweet("test");
         assertEquals(list.hasTweet("test"), false);
         assertEquals(list.getCount(), 1);
+    }
+
+    //lab 5
+    private Boolean weWereNotified;
+
+    //lab 5 this is an extra function that this test is going to use, testObservable is going to call this method
+    public void myNotify(MyObservable observable) {
+        weWereNotified = Boolean.TRUE;
+    }
+
+    //lab 5
+    public void testObservable() {
+        TweetList list = new TweetList();
+        //needs an addObserver
+        list.addObserver(this);
+        Tweet tweet = new NormalTweet("test");
+        // we shouldn't have been notified here
+        weWereNotified = Boolean.FALSE;
+        list.addTweet(tweet);
+        // we should have been notified here
+        assertTrue(weWereNotified);
+    }
+
+    //lab 5
+    public void testModifyTweetInList() {
+        TweetList list = new TweetList();
+        //needs an addObserver
+        list.addObserver(this);
+        Tweet tweet = new NormalTweet("test");
+        list.addTweet(tweet);
+        weWereNotified = Boolean.FALSE;
+        tweet.setText("different text");
+        // we should have been notified here when changing the text of the tweet
+        assertTrue(weWereNotified);
     }
 
     /* setUp runs before test, tearDown runs after test
