@@ -14,8 +14,10 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,7 +33,21 @@ public class LonelyTwitterActivity extends Activity {
 	private ListView oldTweetsList;
 	private ArrayList<Tweet> tweets = new ArrayList<Tweet>();
 	private ArrayAdapter<Tweet> adapter;
-
+	private Button saveButton;
+	//lab 6
+	private LonelyTwitterActivity activity = this;
+	//lab 6
+	public ArrayList<Tweet> getTweets() {
+		return tweets;
+	}
+	//lab6
+	public Button getSaveButton() {
+		return saveButton;
+	}
+	//lab 6
+	public ListView getOldTweetsList() {
+		return oldTweetsList;
+	}
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +56,7 @@ public class LonelyTwitterActivity extends Activity {
 		setContentView(R.layout.main); //view
 
 		bodyText = (EditText) findViewById(R.id.body); //view
-		Button saveButton = (Button) findViewById(R.id.save); //view
+		saveButton = (Button) findViewById(R.id.save);
 		oldTweetsList = (ListView) findViewById(R.id.oldTweetsList); //view
 
 		Button clearButton = (Button) findViewById(R.id.clear);
@@ -61,6 +77,16 @@ public class LonelyTwitterActivity extends Activity {
 				tweets.add(new NormalTweet(text)); //controller
 				adapter.notifyDataSetChanged(); //view - not modifying state of model, just updating screen
 				saveInFile(); //model - not part of user interface so must be in model
+			}
+		});
+		//lab 6
+		oldTweetsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Intent intent = new Intent(activity, EditTweetActivity.class);
+				Tweet editTweet = (Tweet) oldTweetsList.getItemAtPosition(position);
+				//should probably be passing a tweet but I don't know how
+				intent.putExtra("Edit", editTweet.getText());
+				startActivity(intent);
 			}
 		});
 	}
@@ -104,4 +130,9 @@ public class LonelyTwitterActivity extends Activity {
 			throw new RuntimeException(e);
 		}
 	}
+	//lab 6
+	public EditText getBodyText() {
+		return bodyText;
+	}
+
 }
